@@ -25,7 +25,7 @@ button{font:inherit;color:inherit}
 .rail{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--rule)}
 .rail .in{max-width:680px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
 .rail .t{font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
-.ticks{flex:1;display:grid;grid-template-columns:repeat(11,1fr);gap:3px}
+.ticks{flex:1;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3px}
 .ticks i{height:4px;border-radius:2px;background:var(--rule)}
 .ticks i.on{background:var(--green)}
 .ticks i.now{background:var(--mark)}
@@ -107,6 +107,22 @@ p{margin:0}
 .cta .b-line{border-color:#EEF1EA;color:#EEF1EA}
 .btn:focus-visible,.copy:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
 
+/* страницы про агента */
+.cmp{border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--sheet)}
+.cmp .r{display:grid;grid-template-columns:1fr 1fr}
+.cmp .r>div{padding:11px 12px;font-size:14.5px;line-height:1.4}
+.cmp .r>div+div{border-left:1px solid var(--rule);background:#EEF1EA;font-weight:500}
+.cmp .r+.r{border-top:1px solid var(--rule)}
+.cmp .hd>div{font:600 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--paper)!important}
+.cmp .hd>div+div{color:var(--green)}
+.pros{display:flex;flex-direction:column;gap:12px;margin:0;padding:0;list-style:none}
+.pros li{display:grid;grid-template-columns:30px 1fr;gap:10px}
+.pros .sn{width:26px;height:26px;border-radius:6px;background:var(--mark);color:var(--markInk);display:grid;place-content:center;font:700 12px var(--mono)}
+.pros b{display:block;font-size:16.5px;margin-bottom:2px}
+.pros p{color:#3B443E;font-size:15px}
+.chipl{display:inline-block;margin-top:6px;font:500 12.5px var(--mono);background:var(--ink);color:#F4F5F0;border-radius:4px;padding:4px 8px;-webkit-user-select:text;user-select:text}
+.sched{display:flex;gap:10px;align-items:flex-start;background:#E4E9E2;border-radius:6px;padding:12px 14px;font-size:14.5px}
+.sched::before{content:"⏱";font-size:16px;line-height:1.3}
 /* калькулятор */
 .calc .row{grid-template-columns:28px 1fr 118px}
 .calc input[type=checkbox]{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:1.5px solid var(--ink);border-radius:4px;margin:0;display:grid;place-content:center;background:var(--sheet)}
@@ -139,7 +155,7 @@ p{margin:0}
 .nav .in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:auto 1fr;gap:10px}
 .nav .prev{width:52px;border:1.5px solid var(--ink);background:transparent;border-radius:6px;font:600 18px var(--mono);cursor:pointer}
 .nav .next{border:0;background:var(--ink);color:#F4F5F0;border-radius:6px;padding:15px;font:600 15px var(--body);cursor:pointer;text-align:left;display:flex;justify-content:space-between}
-.nav .next small{font:500 12px var(--mono);opacity:.7}
+.nav .next small{font:500 12px var(--mono);opacity:.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62%;text-align:right}
 .nav.only .in{grid-template-columns:1fr}
 
 .toast{position:fixed;left:16px;right:16px;bottom:92px;z-index:50;max-width:648px;margin:0 auto;background:var(--ink);color:#F4F5F0;padding:14px 16px;border-radius:6px;font-weight:500;transform:translateY(20px);opacity:0;transition:.25s;pointer-events:none}
@@ -189,7 +205,6 @@ p{margin:0}
 </style>
 </head>
 <body>
-<div id="wm"></div>
 <div id="app"><div class="center"><p class="eyebrow">Открываю гайд…</p></div></div>
 <div class="toast" id="toast"></div>
 <script>
@@ -239,23 +254,23 @@ function toast(t){var e=$("#toast");e.textContent=t;e.classList.add("show");clea
 function screen(h){$("#app").innerHTML='<div class="center fade">'+h+'</div>'}
 function onlyBot(){return '<p class="eyebrow">Доступ по пропуску</p><h1>Гайд открывается только из бота</h1><p class="lead">Нажмите «Открыть гайд» в чате с ботом.</p><button class="btn b-line" onclick="TGOPEN(\'https://t.me/'+BOT+'\')">Перейти в бота</button>'}
 function act(w){google.script.run.withSuccessHandler(function(){toast("Готово, я написал вам в чат с ботом. Закройте гайд, чтобы посмотреть.")}).guideAct(INIT,w)}
-function wm(t){var c=document.createElement("canvas");c.width=340;c.height=210;var x=c.getContext("2d");x.translate(170,105);x.rotate(-.42);x.fillStyle="#141A16";x.font="500 14px 'JetBrains Mono',monospace";x.textAlign="center";x.fillText(t,0,0);$("#wm").style.background="url("+c.toDataURL()+")"}
-function copy(){var t=D.pages[I].prompt,b=$("#cp");function done(){b.classList.add("ok");b.textContent="Скопировано. Вставьте в чат с ИИ";setTimeout(function(){b.classList.remove("ok");b.textContent="Скопировать промт"},2600)}
+function wm(t){return;var c=document.createElement("canvas");c.width=340;c.height=210;var x=c.getContext("2d");x.translate(170,105);x.rotate(-.42);x.fillStyle="#141A16";x.font="500 14px 'JetBrains Mono',monospace";x.textAlign="center";x.fillText(t,0,0);$("#wm").style.background="url("+c.toDataURL()+")"}
+function copy(){var t=D.pages[I].prompt,b=$("#cp");function done(){b.classList.add("ok");b.textContent="Скопировано. Вставьте в Cowork";setTimeout(function(){b.classList.remove("ok");b.textContent="Скопировать задание"},2600)}
   try{navigator.clipboard.writeText(t).then(done,function(){old(t);done()})}catch(e){old(t);done()}}
 function old(t){var a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}document.body.removeChild(a)}
 function hl(s){return esc(s).replace(/\[([^\]]+)\]/g,"<b>[$1]</b>")}
 function photo(k,tag,stamp,extra){var st=IMG[k]?' style="background-image:url('+IMG[k]+')"':"";return '<div class="photo" data-img="'+k+'"'+st+'>'+(stamp?'<span class="stamp">'+esc(stamp)+'</span>':"")+(tag?'<span class="tag">'+esc(tag)+'</span>':"")+(extra||"")+'</div>'}
 function loadImg(k){if(!k)return;if(!IMG[k]){var c=lsGet("gimg2_"+k);if(c)IMG[k]=c}if(IMG[k]){var e0=document.querySelector('[data-img="'+k+'"]');if(e0)e0.style.backgroundImage="url("+IMG[k]+")";return}google.script.run.withSuccessHandler(function(u){if(!u)return;IMG[k]=u;lsSet("gimg2_"+k,u);var e=document.querySelector('[data-img="'+k+'"]');if(e)e.style.backgroundImage="url("+u+")"}).guideImg(INIT,k)}
 function calc(){var s=0,n=0;D.roles.forEach(function(r){var c=$("#c_"+r.k),v=$("#v_"+r.k);if(c&&c.checked){s+=Number(v.value)||0;n++}});
-  $("#sum").textContent=fmt(s)+" ₸";$("#year").textContent=fmt(s*12)+" ₸";$("#save").textContent=fmt(Math.max(0,s-100000)*12)+" ₸";$("#cnt").textContent=n+" из 7"}
+  $("#sum").textContent=fmt(s)+" ₸";$("#year").textContent=fmt(s*12)+" ₸";$("#save").textContent=fmt(Math.max(0,s-10000)*12)+" ₸";$("#cnt").textContent=n+" из 7"}
 
 function pCover(p){
   var h='<div class="cover">'+photo("cover","","",'<div class="over"><span class="eyebrow">Гайд · Алишер Жакишев</span><h1 class="ch"><span class="nw">7 ИИ-сотрудников</span> <span class="plate">за один вечер</span></h1><p>'+esc(p.sub)+'</p></div>')+'</div>';
   h+='<div class="stack" style="padding-top:24px"><p class="lead">'+esc(p.lead)+'</p>';
   h+='<div><div class="sec-t">Штатное расписание, Астана 2026</div><div class="roster">';
   var tot=0;D.roles.forEach(function(r,i){tot+=r.s;h+='<div class="row"><span class="n">0'+(i+1)+'</span><span>'+esc(r.t)+'</span><span class="sum strike">'+fmt(r.s)+' ₸</span></div>'});
-  h+='<div class="row total"><span class="n">∑</span><span>ИИ вместо штата</span><span class="sum">~100 000 ₸</span></div></div>';
-  h+='<p style="font-size:14px;color:var(--muted);margin-top:8px">Живые сотрудники обошлись бы в '+fmt(tot)+' ₸ в месяц. Средние зарплаты по Астане.</p></div>';
+  h+='<div class="row total"><span class="n">∑</span><span>ИИ-агент вместо штата</span><span class="sum">от $20</span></div></div>';
+  h+='<p style="font-size:14px;color:var(--muted);margin-top:8px">Живые сотрудники обошлись бы в '+fmt(tot)+' ₸ в месяц, это средние зарплаты по Астане. Агент стоит от $20.</p></div>';
   h+='<div><div class="sec-t">Как пользоваться</div><ol class="steps">'+p.steps.map(function(s,i){return '<li><span class="sn">'+(i+1)+'</span><span>'+esc(s)+'</span></li>'}).join("")+'</ol></div>';
   h+='<div class="prep"><div class="sec-t">Что понадобится</div><p>'+esc(p.need)+'</p></div></div>';
   return h;
@@ -264,24 +279,33 @@ function pEmp(p){
   var r=D.roles[p.n-1]||{s:0};
   var h=photo("e"+p.n,"Личное дело № 0"+p.n,"Принят в штат");
   h+='<div class="stack"><div class="file-head"><span class="eyebrow">Сотрудник '+p.n+' из 7</span><h1>'+esc(p.role)+'</h1></div>';
-  h+='<div class="pay"><div><span class="k">Оклад в Астане</span><span class="v strike">'+fmt(r.s)+' ₸</span></div><div><span class="k">ИИ-сотрудник</span><span class="v">'+esc(p.time)+'</span></div></div>';
+  h+='<div class="pay"><div><span class="k">Оклад в Астане</span><span class="v strike">'+fmt(r.s)+' ₸</span></div><div><span class="k">Агенту нужно</span><span class="v">'+esc(p.time)+'</span></div></div>';
   h+='<p class="task">'+esc(p.task)+'</p>';
   h+='<div class="case"><span class="big" data-v="'+esc(p.big)+'">'+esc(p.big)+'</span><span class="bl">'+esc(p.bigL)+'</span><p>'+esc(p.kase)+'</p></div>';
   h+='<div class="prep"><div class="sec-t">Что подготовить</div><p>'+esc(p.prep)+'</p></div>';
-  h+='<div class="memo"><div class="mh"><span>Служебная записка · промт</span><span>'+esc(p.role)+'</span></div><pre>'+hl(p.prompt)+'</pre><button class="copy" id="cp" onclick="copy()">Скопировать промт</button></div>';
-  h+='<p style="font-size:14px;color:var(--muted);margin-top:-6px">Всё, что выделено в [скобках], замените на своё.</p>';
+  h+='<div class="memo"><div class="mh"><span>Задание агенту</span><span>'+esc(p.role)+'</span></div><pre>'+hl(p.prompt)+'</pre><button class="copy" id="cp" onclick="copy()">Скопировать задание</button></div>';
+  h+='<p style="font-size:14px;color:var(--muted);margin-top:-6px">Вставьте задание в Cowork. Всё, что выделено в [скобках], замените на своё.</p>';
   h+='<div><div class="sec-t">Что получите</div><ul class="get">'+p.get.map(function(g){return '<li><span>'+esc(g)+'</span></li>'}).join("")+'</ul></div>';
+  if(p.sched)h+='<div class="sched">'+esc(p.sched)+'</div>';
   if(p.warn)h+='<p class="warn">'+esc(p.warn)+'</p>';
   if(p.demo)h+='<div class="demo"><span class="eyebrow">Живое демо</span><p>'+esc(p.demoText)+'</p><button class="btn b-line" onclick="'+(p.demo==="rev"?"startDemo(INIT)":"act('"+p.demo+"')")+'">Сделать на моём бизнесе</button></div>';
   if(D.bron)h+='<div class="cta"><span class="eyebrow">Чтобы работал сам</span><p>'+esc(p.cta)+'</p><button class="btn b-mark" onclick="act(\'bron\')">Хочу на созвон</button></div>';
+  return h+'</div>';
+}
+function pInfo(p){
+  var h='<div class="stack" style="padding-top:26px"><span class="eyebrow">'+esc(p.eyebrow||"")+'</span><h1>'+esc(p.title)+'</h1><p class="lead">'+esc(p.lead||"")+'</p>';
+  if(p.compare){h+='<div class="cmp">'+p.compare.map(function(r,i){return '<div class="r'+(i?"":" hd")+' rise" style="--d:'+(i*.06)+'s"><div>'+esc(r[0])+'</div><div>'+esc(r[1])+'</div></div>'}).join("")+'</div>'}
+  if(p.rows){h+='<ul class="pros">'+p.rows.map(function(r,i){return '<li class="rise" style="--d:'+(.2+i*.08)+'s"><span class="sn">'+(i+1)+'</span><div><b>'+esc(r.t)+'</b><p>'+esc(r.d)+'</p></div></li>'}).join("")+'</ul>'}
+  if(p.steps){h+='<ol class="steps">'+p.steps.map(function(r,i){return '<li><span class="sn">'+(i+1)+'</span><div><b>'+esc(r.t)+'</b><p style="color:#3B443E;font-size:15px;margin-top:2px">'+esc(r.d)+'</p>'+(r.link?'<span class="chipl">'+esc(r.link)+'</span>':'')+'</div></li>'}).join("")+'</ol>'}
+  if(p.note)h+='<div class="note">'+esc(p.note)+'</div>';
   return h+'</div>';
 }
 function pCalc(p){
   var h='<div class="stack" style="padding-top:26px"><span class="eyebrow">Калькулятор</span><h1>'+esc(p.title)+'</h1><p class="lead">'+esc(p.lead)+'</p>';
   h+='<div class="roster calc">';
   D.roles.forEach(function(r,i){h+='<label class="row" for="c_'+r.k+'"><input type="checkbox" id="c_'+r.k+'" checked onchange="calc()"><span>'+esc(r.t)+'</span><input type="number" id="v_'+r.k+'" value="'+r.s+'" inputmode="numeric" oninput="calc()"></label>'});
-  h+='</div><div class="res"><div><span class="k">Отмечено</span><span class="v" id="cnt"></span></div><div><span class="k">В месяц</span><span class="v" id="sum"></span></div><div><span class="k">В год</span><span class="v" id="year"></span></div><div><span class="k">ИИ в месяц</span><span class="v">~100 000 ₸</span></div><div class="wide"><span class="k">Экономия за год</span><span class="v" id="save"></span></div></div>';
-  return h+'<p style="font-size:14px;color:var(--muted)">ИИ не заменяет каждого человека целиком. Он забирает рутину, поэтому часто хватает одного сотрудника вместо трёх.</p></div>';
+  h+='</div><div class="res"><div><span class="k">Отмечено</span><span class="v" id="cnt"></span></div><div><span class="k">В месяц</span><span class="v" id="sum"></span></div><div><span class="k">В год</span><span class="v" id="year"></span></div><div><span class="k">Агент в месяц</span><span class="v">от $20</span></div><div class="wide"><span class="k">Экономия за год</span><span class="v" id="save"></span></div></div>';
+  return h+'<p style="font-size:14px;color:var(--muted)">Агент не заменяет каждого человека целиком. Он забирает рутину, поэтому часто хватает одного сотрудника вместо трёх. Подписка от $20, около 10 000 ₸ в месяц.</p></div>';
 }
 function pMore(p){
   var h='<div class="stack" style="padding-top:26px"><span class="eyebrow">Это только начало</span><h1>'+esc(p.title)+'</h1><p class="lead">'+esc(p.lead)+'</p><div class="more">';
@@ -304,7 +328,7 @@ function tm(){var s=Math.floor((Date.now()-T0)/1000);return "00:"+String(s).padS
 function logLine(t,cls){var l=$("#log");if(!l)return null;var d=document.createElement("div");d.className="ln";d.innerHTML='<span class="tm">'+tm()+'</span><span class="'+(cls||"")+'">'+t+'</span>';l.appendChild(d);return d.lastChild}
 function done(el,t){if(!el)return;el.className="ok";el.innerHTML=t}
 function ticker(list){var box=$("#tick");if(!box||!list||!list.length)return;var i=0;clearInterval(DS.tk);function one(){var x=list[i++%list.length];box.innerHTML='<div class="tk"><span class="stars">'+stars(x.r)+'</span><br>'+esc(x.t)+'</div>'}one();DS.tk=setInterval(one,2200)}
-function demoRail(){return '<div class="rail"><div class="in"><span class="t">Живое демо</span><div class="ticks" style="grid-template-columns:repeat(3,1fr)"><i class="'+(DS.st>0?"on":"now")+'"></i><i class="'+(DS.st>1?"on":DS.st===1?"now":"")+'"></i><i class="'+(DS.st>2?"on":DS.st===2?"now":"")+'"></i></div></div></div>'}
+function demoRail(){return '<div class="rail"><div class="in"><span class="t">Живое демо</span><div class="ticks"><i class="'+(DS.st>0?"on":"now")+'"></i><i class="'+(DS.st>1?"on":DS.st===1?"now":"")+'"></i><i class="'+(DS.st>2?"on":DS.st===2?"now":"")+'"></i></div></div></div>'}
 function demoForm(err){DS.st=0;
   var h='<main class="page fade"><div class="stack" style="padding-top:26px"><span class="eyebrow">Сотрудник-маркетолог · живое демо</span><h1>Что клиенты пишут <span class="plate">о вас</span></h1><p class="lead">Напишите название и улицу или вставьте ссылку из 2ГИС. Я прочитаю отзывы и скажу, за что вас любят и из-за чего уходят.</p>';
   h+='<form class="dform" id="df"><input id="dq" name="dq" autocomplete="off" placeholder="Кофейня Сабр, Туран 55" maxlength="300"><button class="btn b-mark" type="submit">Разобрать мой бизнес</button></form>';
@@ -345,7 +369,7 @@ function startDemo(init){INIT=init;if(!init){screen(onlyBot());return}
   run("demoState",init).then(function(r){if(!r||!r.ok){screen(onlyBot());return}DS.price=r.price;wm(r.mark);if(r.done&&r.result)demoResult(r.result,r.paid);else demoForm()}).catch(function(){screen('<h1>Не получилось открыть</h1><p class="lead">Закройте и откройте ещё раз.</p>')})}
 function page(){
   var p=D.pages[I],n=D.pages.length,h;
-  if(p.kind==="cover")h=pCover(p);else if(p.kind==="emp")h=pEmp(p);else if(p.kind==="calc")h=pCalc(p);else if(p.kind==="more")h=pMore(p);else h=pFinal(p);
+  if(p.kind==="cover")h=pCover(p);else if(p.kind==="info")h=pInfo(p);else if(p.kind==="emp")h=pEmp(p);else if(p.kind==="calc")h=pCalc(p);else if(p.kind==="more")h=pMore(p);else h=pFinal(p);
   var ticks="";for(var i=0;i<n;i++)ticks+='<i class="'+(i<I?"on":i===I?"now":"")+'"></i>';
   var rail='<div class="rail"><div class="in"><span class="t">'+String(I+1).padStart(2,"0")+" / "+n+'</span><div class="ticks">'+ticks+'</div></div></div>';
   var nx=D.pages[I+1],nl=nx?(nx.kind==="emp"?nx.role:nx.title||""):"";
