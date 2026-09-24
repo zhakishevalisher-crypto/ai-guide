@@ -361,6 +361,15 @@ function uidOf(init){try{return JSON.parse(new URLSearchParams(init).get("user")
 function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
+function b64(s){var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+function fastOpen(init,cb){try{
+  var q=new URLSearchParams(location.search),k=q.get("k"),u=q.get("u"),m=q.get("m");
+  if(!k||!u||String(uidOf(init))!==String(u)||!window.crypto||!crypto.subtle)return;
+  var kb=b64(k.replace(/-/g,"+").replace(/_/g,"/")+"==".slice(0,(4-k.length%4)%4));
+  Promise.all([fetch("g.json?v="+(q.get("v")||"")).then(function(r){return r.json()}),crypto.subtle.importKey("raw",kb,"AES-GCM",false,["decrypt"])]).then(function(x){
+    return crypto.subtle.decrypt({name:"AES-GCM",iv:b64(x[0].iv)},x[1],b64(x[0].ct))}).then(function(buf){
+    var o=JSON.parse(new TextDecoder().decode(buf));cb({ok:true,title:o.title,pages:o.pages,roles:o.roles,at:0,mark:m||"",bron:true})}).catch(function(){});
+}catch(e){}}
 var GKEY="";
 function show(r){D=r;I=Math.max(I||0,r.at||0);wm(r.mark);page()}
 function start(init){
@@ -368,7 +377,7 @@ function start(init){
   GKEY="guide3_"+uidOf(init);
   var cached=lsGet(GKEY),shown=false;
   if(cached&&cached.ok){show(cached);shown=true}
-  else{screen('<p class="eyebrow">Открываю гайд</p><div class="bar" style="background:var(--rule)"><i></i></div>');setTimeout(function(){if(!D)screen('<p class="eyebrow">Открываю гайд</p><div class="bar" style="background:var(--rule)"><i></i></div><p style="color:var(--muted);font-size:14px">Соединяюсь с сервером, ещё пара секунд.</p>')},5000)}
+  else{fastOpen(init,function(r){if(!shown&&!D){show(r);shown=true}});screen('<p class="eyebrow">Открываю гайд</p><div class="bar" style="background:var(--rule)"><i></i></div>');setTimeout(function(){if(!D)screen('<p class="eyebrow">Открываю гайд</p><div class="bar" style="background:var(--rule)"><i></i></div><p style="color:var(--muted);font-size:14px">Соединяюсь с сервером, ещё пара секунд.</p>')},5000)}
   var tries=0;
   (function go1(){tries++;
     google.script.run.withFailureHandler(function(){if(tries<3)return setTimeout(go1,1200*tries);if(!shown)screen('<h1>Не получилось открыть</h1><p class="lead">Проверьте интернет и нажмите ещё раз.</p><button class="btn b-mark" onclick="start(INIT)">Открыть ещё раз</button>')}).withSuccessHandler(function(r){
