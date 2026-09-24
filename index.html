@@ -398,7 +398,7 @@ var GKEY="";
 function show(r){D=r;I=Math.max(I||0,r.at||0);wm(r.mark);page()}
 function start(init){
   INIT=init;if(!init){screen(onlyBot());return}
-  GKEY="guide3_"+uidOf(init);
+  GKEY="guide_"+(new URLSearchParams(location.search).get("v")||"0")+"_"+uidOf(init);
   var cached=lsGet(GKEY),shown=false;
   if(cached&&cached.ok){show(cached);shown=true}
   else{fastOpen(init,function(r){if(!shown&&!D){show(r);shown=true}});screen('<p class="eyebrow">Открываю гайд</p><div class="bar" style="background:var(--rule)"><i></i></div>');setTimeout(function(){if(!D)screen('<p class="eyebrow">Открываю гайд</p><div class="bar" style="background:var(--rule)"><i></i></div><p style="color:var(--muted);font-size:14px">Соединяюсь с сервером, ещё пара секунд.</p>')},5000)}
@@ -410,7 +410,7 @@ function start(init){
         if(r.why==="pay")screen('<p class="eyebrow">Доступ по пропуску</p><h1>Этот гайд ещё <span class="plate">не куплен</span></h1><p class="lead">Если вам переслали ссылку: гайд открывается только у того, кто его купил. Свой можно взять в боте за '+esc(r.price)+' ₸.</p><button class="btn b-mark" onclick="act(\'buy\')">Купить гайд</button>');
         else if(r.why==="fail"&&tries<3)setTimeout(go1,1200*tries);
         else screen(onlyBot());return}
-      lsSet(GKEY,r);if(!shown){show(r);shown=true}else{D=r}
+      lsSet(GKEY,r);if(!shown){show(r);shown=true}else{var ch=JSON.stringify(D.pages)!==JSON.stringify(r.pages);D=r;if(ch)page()}
     }).guideOpen(init)})();
 }
 document.addEventListener("contextmenu",function(e){e.preventDefault()});
