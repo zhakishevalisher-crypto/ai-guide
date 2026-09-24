@@ -202,9 +202,15 @@ p{margin:0}
       if (k === "withFailureHandler") return function(f){ no = f; return p; };
       return function(){
         var a = Array.prototype.slice.call(arguments);
-        fetch(API, {method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify({fn: k, args: a})})
-          .then(function(r){ return r.json(); }).then(function(j){ ok && ok(j.r); })
-          .catch(function(e){ no && no(e); });
+        var body = JSON.stringify({fn: k, args: a}), n = 0;
+        (function go(){
+          n++;
+          var ac = window.AbortController ? new AbortController() : null, tm = setTimeout(function(){ ac && ac.abort(); }, k === "demoAnalyze" || k === "demoPoll" || k === "demoReviews" || k === "demoFind" ? 170000 : 25000);
+          fetch(API, {method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: body, signal: ac ? ac.signal : undefined})
+            .then(function(r){ if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+            .then(function(j){ clearTimeout(tm); ok && ok(j.r); })
+            .catch(function(e){ clearTimeout(tm); if (n < 2 && !/^demo(Find|Reviews|Analyze)$/.test(k)) return setTimeout(go, 800); no && no(e); });
+        })();
       };
     }});
     return p;
@@ -239,7 +245,7 @@ function copy(){var t=D.pages[I].prompt,b=$("#cp");function done(){b.classList.a
 function old(t){var a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}document.body.removeChild(a)}
 function hl(s){return esc(s).replace(/\[([^\]]+)\]/g,"<b>[$1]</b>")}
 function photo(k,tag,stamp,extra){var st=IMG[k]?' style="background-image:url('+IMG[k]+')"':"";return '<div class="photo" data-img="'+k+'"'+st+'>'+(stamp?'<span class="stamp">'+esc(stamp)+'</span>':"")+(tag?'<span class="tag">'+esc(tag)+'</span>':"")+(extra||"")+'</div>'}
-function loadImg(k){if(IMG[k]||!k)return;google.script.run.withSuccessHandler(function(u){if(!u)return;IMG[k]=u;var e=document.querySelector('[data-img="'+k+'"]');if(e)e.style.backgroundImage="url("+u+")"}).guideImg(INIT,k)}
+function loadImg(k){if(!k)return;if(!IMG[k]){var c=lsGet("gimg2_"+k);if(c)IMG[k]=c}if(IMG[k]){var e0=document.querySelector('[data-img="'+k+'"]');if(e0)e0.style.backgroundImage="url("+IMG[k]+")";return}google.script.run.withSuccessHandler(function(u){if(!u)return;IMG[k]=u;lsSet("gimg2_"+k,u);var e=document.querySelector('[data-img="'+k+'"]');if(e)e.style.backgroundImage="url("+u+")"}).guideImg(INIT,k)}
 function calc(){var s=0,n=0;D.roles.forEach(function(r){var c=$("#c_"+r.k),v=$("#v_"+r.k);if(c&&c.checked){s+=Number(v.value)||0;n++}});
   $("#sum").textContent=fmt(s)+" ₸";$("#year").textContent=fmt(s*12)+" ₸";$("#save").textContent=fmt(Math.max(0,s-100000)*12)+" ₸";$("#cnt").textContent=n+" из 7"}
 
@@ -351,13 +357,28 @@ function page(){
   google.script.run.guideSeen(INIT,I);
 }
 function go(d){I=Math.max(0,Math.min(D.pages.length-1,I+d));page()}
+function uidOf(init){try{return JSON.parse(new URLSearchParams(init).get("user")||"{}").id||""}catch(e){return ""}}
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
+var GKEY="";
+function show(r){D=r;I=Math.max(I||0,r.at||0);wm(r.mark);page()}
 function start(init){
   INIT=init;if(!init){screen(onlyBot());return}
-  google.script.run.withFailureHandler(function(){screen('<h1>Не получилось открыть</h1><p class="lead">Закройте гайд и откройте его ещё раз.</p>')}).withSuccessHandler(function(r){
-    if(!r||!r.ok){
-      if(r&&r.why==="pay")screen('<p class="eyebrow">Доступ по пропуску</p><h1>Этот гайд ещё <span class="plate">не куплен</span></h1><p class="lead">Если вам переслали ссылку: гайд открывается только у того, кто его купил. Свой можно взять в боте за '+esc(r.price)+' ₸.</p><button class="btn b-mark" onclick="act(\'buy\')">Купить гайд</button>');
-      else screen(onlyBot());return}
-    D=r;I=r.at||0;wm(r.mark);page()}).guideOpen(init);
+  GKEY="guide3_"+uidOf(init);
+  var cached=lsGet(GKEY),shown=false;
+  if(cached&&cached.ok){show(cached);shown=true}
+  else{screen('<p class="eyebrow">Открываю гайд</p><div class="bar" style="background:var(--rule)"><i></i></div>');setTimeout(function(){if(!D)screen('<p class="eyebrow">Открываю гайд</p><div class="bar" style="background:var(--rule)"><i></i></div><p style="color:var(--muted);font-size:14px">Соединяюсь с сервером, ещё пара секунд.</p>')},5000)}
+  var tries=0;
+  (function go1(){tries++;
+    google.script.run.withFailureHandler(function(){if(tries<3)return setTimeout(go1,1200*tries);if(!shown)screen('<h1>Не получилось открыть</h1><p class="lead">Проверьте интернет и нажмите ещё раз.</p><button class="btn b-mark" onclick="start(INIT)">Открыть ещё раз</button>')}).withSuccessHandler(function(r){
+      if(!r){if(tries<3)return setTimeout(go1,1200*tries);return}
+      if(!r.ok){lsDel(GKEY);D=null;
+        if(r.why==="pay")screen('<p class="eyebrow">Доступ по пропуску</p><h1>Этот гайд ещё <span class="plate">не куплен</span></h1><p class="lead">Если вам переслали ссылку: гайд открывается только у того, кто его купил. Свой можно взять в боте за '+esc(r.price)+' ₸.</p><button class="btn b-mark" onclick="act(\'buy\')">Купить гайд</button>');
+        else if(r.why==="fail"&&tries<3)setTimeout(go1,1200*tries);
+        else screen(onlyBot());return}
+      lsSet(GKEY,r);if(!shown){show(r);shown=true}else{D=r}
+    }).guideOpen(init)})();
 }
 document.addEventListener("contextmenu",function(e){e.preventDefault()});
 google.script.url.getLocation(function(loc){
