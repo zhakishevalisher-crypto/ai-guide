@@ -201,6 +201,18 @@ p{margin:0}
 .rep .it b{font-weight:600}.rep .it q{color:#3B443E;font-style:italic}
 .rep .it q::before{content:"«"}.rep .it q::after{content:"»"}
 .rep .n{font:500 12px var(--mono);color:#8A4B2B}
+.ld{display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px}
+.sh{position:relative;width:78px;height:96px;background:var(--sheet);border:1px solid var(--rule);border-radius:6px;box-shadow:0 10px 30px -14px rgba(20,26,22,.35);padding:16px 12px;display:flex;flex-direction:column;gap:9px;overflow:hidden;animation:shf 2.4s ease-in-out infinite}
+.sh b{display:block;height:5px;border-radius:3px;background:var(--rule);transform-origin:left;animation:shl 2.4s ease-in-out infinite}
+.sh b:nth-child(2){width:80%;animation-delay:.25s}.sh b:nth-child(3){width:92%;animation-delay:.5s}.sh b:nth-child(4){width:60%;animation-delay:.75s}
+.sh::after{content:"";position:absolute;left:0;right:0;height:22px;top:-22px;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--mark) 55%,transparent));animation:shs 2.4s cubic-bezier(.6,0,.4,1) infinite}
+.sh .dot{position:absolute;right:8px;bottom:8px;width:9px;height:9px;border-radius:50%;background:#1E3B31;animation:shp 1.2s ease-in-out infinite}
+.ld .st{font:500 12px/1.4 var(--mono,monospace);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-height:18px;transition:opacity .35s}
+@keyframes shl{0%,15%{transform:scaleX(.15);background:var(--rule)}50%,85%{transform:scaleX(1);background:#1E3B31}100%{transform:scaleX(.15);background:var(--rule)}}
+@keyframes shs{0%{top:-22px}60%,100%{top:100%}}
+@keyframes shf{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(1deg)}}
+@keyframes shp{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.sh,.sh b,.sh::after,.sh .dot{animation:none}.sh b{background:#1E3B31}}
 @media (prefers-reduced-motion:reduce){.photo .stamp,.rep .rh .stamp2,.rise,.log .ln{animation:none}.strike{animation:none;background-size:100% 2px}.ticker .tk{animation:none;opacity:1}.bar i{animation:none;width:100%}}
 .rep .nums.n4{grid-template-columns:repeat(4,1fr)}.rep .nums.n4>div{padding:12px 10px}.rep .nums.n4 b{font-size:19px}
 .b2{display:flex;flex-direction:column;gap:6px}
@@ -221,7 +233,13 @@ p{margin:0}
 </style>
 </head>
 <body>
-<div id="app"><div class="center"><p class="eyebrow">Открываю гайд…</p></div></div>
+<div id="app"><div class="center"><div class="ld"><div class="sh"><b></b><b></b><b></b><b></b><i class="dot"></i></div><p class="st" id="ldt">&nbsp;</p></div></div></div>
+<script>
+(function(){var dm=/[?&]mode=demo/.test(location.search)||/mode=demo/.test(location.href),
+L=dm?["Агент просыпается","Подключаю базу отзывов Астаны","Готовлю рабочее место"]:["Открываю гайд","Раскладываю сотрудников по местам","Почти готово"],i=0;
+function nx(){var e=document.getElementById("ldt");if(!e)return clearInterval(t);e.style.opacity=0;setTimeout(function(){e.textContent=L[i%L.length];e.style.opacity=1;i++},200)}
+nx();var t=setInterval(nx,1800);window.LDI=t;})();
+</script>
 <div class="toast" id="toast"></div>
 <script>
 (function(){
@@ -267,6 +285,7 @@ function $(s){return document.querySelector(s)}
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function fmt(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g," ")}
 function toast(t){var e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(e._t);e._t=setTimeout(function(){e.classList.remove("show")},3800)}
+function ldr(t){return '<div class="ld"><div class="sh"><b></b><b></b><b></b><b></b><i class="dot"></i></div><p class="st">'+t+'</p></div>'}
 function screen(h){$("#app").innerHTML='<div class="center fade">'+h+'</div>'}
 function onlyBot(){return '<p class="eyebrow">Доступ по пропуску</p><h1>Гайд открывается только из бота</h1><p class="lead">Нажмите «Открыть гайд» в чате с ботом.</p><button class="btn b-line" onclick="TGOPEN(\'https://t.me/'+BOT+'\')">Перейти в бота</button>'}
 function act(w){google.script.run.withSuccessHandler(function(){toast("Готово, я написал вам в чат с ботом. Закройте гайд, чтобы посмотреть.")}).guideAct(INIT,w)}
@@ -332,7 +351,7 @@ function pFinal(p){
   var h='<div class="final"><div class="stack"><span class="eyebrow" style="color:#B9C7BE">Вы прошли всех семерых</span><h1>'+esc(p.title)+'</h1><p class="lead" style="color:#E6ECE8">'+esc(p.lead)+'</p>';
   h+='<div><div class="sec-t" style="color:#B9C7BE">Чего в гайде нет</div><ul>'+p.miss.map(function(m){return "<li>"+esc(m)+"</li>"}).join("")+'</ul></div>';
   h+='<div style="border-top:1px solid #3D5E50;padding-top:16px" class="stack"><h2 style="color:#F4F5F0">Созвон с Алишером, 40 минут</h2><p style="color:#DCE3DE">'+esc(p.call)+'</p>';
-  if(D.bron)h+='<button class="btn b-mark" onclick="act(\'bron\')">Забронировать созвон · 50 000 ₸</button><p style="font-size:13px;color:#B9C7BE">Бронь засчитывается в стоимость курса. Мест в потоке мало.</p>';
+  if(D.bron){var dsc=D.bp&&D.bf&&D.bp<D.bf;h+=(dsc?'<p style="color:#DCE3DE">Созвон стоит <s>'+fmt(D.bf)+' ₸</s>. Гайд вы уже оплатили, я его засчитываю: для вас <b style="color:#F4F5F0">'+fmt(D.bp)+' ₸</b>, 24 часа после покупки.</p>':'')+'<button class="btn b-mark" onclick="act(\'bron\')">Забронировать созвон'+(D.bp?' · '+fmt(D.bp)+' ₸':'')+'</button><p style="font-size:13px;color:#B9C7BE">Бронь засчитывается в стоимость курса. Мест в потоке мало.</p>'}
   return h+'</div></div></div>';
 }
 
@@ -367,11 +386,11 @@ function demoRun(q){T0=Date.now();DS.st=1;
       DS.st=2;done(l2,"✓ Прочитал "+x.stats.read+" "+pl(x.stats.read,"отзыв","отзыва","отзывов")+", из них плохих: "+x.stats.bad);
       countTo($("#cnt"),x.stats.read,1400);ticker(x.sample);
       var l3=logLine("Ищу, за что любят и из-за чего уходят","wait");
-      return run("demoAnalyze",INIT).then(function(a){if(!a||!a.ok)return demoErr(a&&a.why);done(l3,"✓ Отчёт готов");logLine("Копию отправил вам в чат","ok");setTimeout(function(){clearInterval(DS.tk);DS.st=3;demoResult(a.result,a.paid)},900)});
+      var wl=null;return (function an(k){return run("demoAnalyze",INIT).then(function(a){if(a&&a.ok&&a.wait&&k<40){if(!wl)wl=logLine("Сейчас много разборов, вы следующий в очереди","wait");return new Promise(function(r){setTimeout(r,4000)}).then(function(){return an(k+1)})}if(wl)done(wl,"✓ Очередь подошла");return a})})(0).then(function(a){if(!a||!a.ok||a.wait)return demoErr(a&&a.why);done(l3,"✓ Отчёт готов");logLine("Копию отправил вам в чат","ok");setTimeout(function(){clearInterval(DS.tk);DS.st=3;demoResult(a.result,a.paid)},900)});
     });
   }).catch(function(){demoErr("fail")});
 }
-function poll(i){if(i>12)return Promise.resolve({ok:false,why:"fail"});return run("demoPoll",INIT).then(function(x){return x&&x.ok&&!x.ready?poll(i+1):x})}
+function poll(i){if(i>20)return Promise.resolve({ok:false,why:"fail"});return run("demoPoll",INIT).then(function(x){return x&&x.ok&&!x.ready?poll(i+1):x})}
 function pl(n,a,b,c){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)return c;if(n1>1&&n1<5)return b;if(n1===1)return a;return c}
 function cpText(t,btn){function ok(){btn.textContent="Скопировано";setTimeout(function(){btn.textContent="Скопировать ответ"},2000)}try{navigator.clipboard.writeText(t).then(ok,function(){old(t);ok()})}catch(e){old(t);ok()}}
 function num(v){return String(v).replace(".",",")}
@@ -394,7 +413,8 @@ function demoResult(res,paid){DS.st=3;DS.res=res;var s=res.stats||{},nc=res.nich
 function bar2(label,you,nic,unit,max){var y=Math.max(0,Math.min(100,you/max*100)),n=Math.max(0,Math.min(100,nic/max*100)),worse=you<nic;
   return '<div class="b2"><div class="b2h"><span>'+esc(label)+'</span></div><div class="b2r"><span class="b2l">Вы</span><div class="b2t"><i class="'+(worse?"bad":"good")+'" style="width:'+y+'%"></i></div><b>'+num(you)+unit+'</b></div><div class="b2r"><span class="b2l">Ниша</span><div class="b2t"><i class="mid" style="width:'+n+'%"></i></div><b>'+num(nic)+unit+'</b></div></div>'}
 function startDemo(init){INIT=init;if(!init){screen(onlyBot());return}
-  run("demoState",init).then(function(r){if(!r||!r.ok){screen(onlyBot());return}DS.price=r.price;wm(r.mark);if(r.done&&r.result)demoResult(r.result,r.paid);else demoForm()}).catch(function(){screen('<h1>Не получилось открыть</h1><p class="lead">Закройте и откройте ещё раз.</p>')})}
+  clearInterval(window.LDI);demoForm();
+  run("demoState",init).then(function(r){if(DS.st!==0)return;if(!r||!r.ok){screen(onlyBot());return}DS.price=r.price;wm(r.mark);if(r.done&&r.result){var q=$("#dq");if(!q||!q.value)demoResult(r.result,r.paid)}}).catch(function(){})}
 function page(){
   var p=D.pages[I],n=D.pages.length,h;
   if(p.kind==="cover")h=pCover(p);else if(p.kind==="info")h=pInfo(p);else if(p.kind==="emp")h=pEmp(p);else if(p.kind==="calc")h=pCalc(p);else if(p.kind==="more")h=pMore(p);else h=pFinal(p);
@@ -429,7 +449,7 @@ function start(init){
   GKEY="guide_"+(new URLSearchParams(location.search).get("v")||"0")+"_"+uidOf(init);
   var cached=lsGet(GKEY),shown=false;
   if(cached&&cached.ok){show(cached);shown=true}
-  else{fastOpen(init,function(r){if(!shown&&!D){show(r);shown=true}});screen('<p class="eyebrow">Открываю гайд</p><div class="bar" style="background:var(--rule)"><i></i></div>');setTimeout(function(){if(!D)screen('<p class="eyebrow">Открываю гайд</p><div class="bar" style="background:var(--rule)"><i></i></div><p style="color:var(--muted);font-size:14px">Соединяюсь с сервером, ещё пара секунд.</p>')},5000)}
+  else{fastOpen(init,function(r){if(!shown&&!D){show(r);shown=true}});if(!document.getElementById("ldt"))screen(ldr("Открываю гайд"));setTimeout(function(){if(!D){clearInterval(window.LDI);screen(ldr("Соединяюсь с сервером, ещё пара секунд"))}},6000)}
   var tries=0;
   (function go1(){tries++;
     google.script.run.withFailureHandler(function(){if(tries<3)return setTimeout(go1,1200*tries);if(!shown)screen('<h1>Не получилось открыть</h1><p class="lead">Проверьте интернет и нажмите ещё раз.</p><button class="btn b-mark" onclick="start(INIT)">Открыть ещё раз</button>')}).withSuccessHandler(function(r){
@@ -438,7 +458,7 @@ function start(init){
         if(r.why==="pay")screen('<p class="eyebrow">Доступ по пропуску</p><h1>Этот гайд ещё <span class="plate">не куплен</span></h1><p class="lead">Если вам переслали ссылку: гайд открывается только у того, кто его купил. Свой можно взять в боте за '+esc(r.price)+' ₸.</p><button class="btn b-mark" onclick="act(\'buy\')">Купить гайд</button>');
         else if(r.why==="fail"&&tries<3)setTimeout(go1,1200*tries);
         else screen(onlyBot());return}
-      lsSet(GKEY,r);if(!shown){show(r);shown=true}else{var ch=JSON.stringify(D.pages)!==JSON.stringify(r.pages);D=r;if(ch)page()}
+      lsSet(GKEY,r);if(!shown){show(r);shown=true}else{var ch=JSON.stringify(D.pages)!==JSON.stringify(r.pages)||D.bp!==r.bp||D.bron!==r.bron;D=r;if(ch)page()}
     }).guideOpen(init)})();
 }
 document.addEventListener("contextmenu",function(e){e.preventDefault()});
