@@ -213,6 +213,36 @@ p{margin:0}
 @keyframes shf{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(1deg)}}
 @keyframes shp{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.sh,.sh b,.sh::after,.sh .dot{animation:none}.sh b{background:#1E3B31}}
+.cw{position:relative;width:100%;aspect-ratio:16/11;background:#F8F8F5;border:1px solid var(--rule);border-radius:10px;overflow:hidden;font:500 11px/1.3 var(--body);color:var(--ink);box-shadow:0 14px 34px -20px rgba(20,26,22,.45);-webkit-user-select:none;user-select:none}
+.cw .top{position:absolute;left:0;right:0;top:0;height:7%;background:#E4E6E0;display:flex;align-items:center;gap:4px;padding-left:8px}.cw .top i{width:7px;height:7px;border-radius:50%;background:#C9CDC4}
+.cw .sb{position:absolute;left:0;top:7%;bottom:0;width:22%;background:#EFF0EB;border-right:1px solid var(--rule);padding:10px 8px;display:flex;flex-direction:column;gap:7px}
+.cw .sb b{display:block;height:6px;border-radius:3px;background:#D8DBD3}.cw .sb b:nth-child(1){width:70%;background:#1E3B31}
+.cw .mn{position:absolute;left:22%;right:0;top:7%;bottom:0;padding:14px}
+.cw .msg{height:8px;border-radius:4px;background:#E3E5DF;margin-bottom:8px}
+.cw .inp{position:absolute;left:4%;right:4%;bottom:6%;height:15%;border:1px solid var(--rule);border-radius:10px;background:#fff;display:flex;align-items:center;padding:0 8px;gap:8px;color:#9AA197}
+.cw .pl{width:22px;height:22px;border-radius:50%;border:1px solid var(--rule);display:grid;place-items:center;font-size:15px;color:var(--ink)}
+.cw .L{position:absolute;opacity:0;transform:translateY(6px) scale(.98);transition:opacity .3s,transform .3s;pointer-events:none}.cw .L.on{opacity:1;transform:none}
+.cw .pop{background:#fff;border:1px solid var(--rule);border-radius:8px;box-shadow:0 10px 24px -12px rgba(0,0,0,.35);padding:5px;min-width:30%}
+.cw .pop div{padding:6px 8px;border-radius:5px;display:flex;justify-content:space-between;gap:10px;align-items:center}.cw .pop div.hl{background:#EDEFE9}
+.cw .tg{width:22px;height:12px;border-radius:7px;background:#C9CDC4;position:relative}.cw .tg::after{content:"";position:absolute;left:2px;top:2px;width:8px;height:8px;border-radius:50%;background:#fff;transition:left .3s}.cw .tg.on{background:#1E3B31}.cw .tg.on::after{left:12px}
+.cw .pg{left:22%;right:0;top:7%;bottom:0;background:#F8F8F5;padding:14px}
+.cw .pg h5{margin:0 0 10px;font:700 14px var(--head);display:flex;justify-content:space-between;align-items:center}.cw .pg h5 span{width:22px;height:22px;border-radius:6px;border:1px solid var(--rule);display:grid;place-items:center;font-size:15px}
+.cw .row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:#fff;margin-bottom:6px}.cw .ok{color:#1E7A4B;font-weight:700}
+.cw .md{left:12%;right:12%;top:14%;bottom:10%;background:#fff;border:1px solid var(--rule);border-radius:12px;box-shadow:0 18px 40px -18px rgba(0,0,0,.45);padding:12px}
+.cw .md h6{margin:0 0 8px;font:700 12px var(--head)}
+.cw .gr{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.cw .gr div{border:1px solid var(--rule);border-radius:8px;padding:9px 6px;text-align:center;font-size:10.5px}.cw .gr div.hl{border-color:#1E3B31;background:#EDF2EE}
+.cw .ic{display:block;width:18px;height:18px;border-radius:5px;margin:0 auto 5px;background:var(--c)}
+.cw .btn2{display:inline-block;margin-top:10px;padding:7px 16px;border-radius:7px;background:#1E3B31;color:#fff;font-weight:700}
+.cw .gw{left:22%;right:22%;top:16%;bottom:14%;background:#fff;border:1px solid var(--rule);border-radius:12px;box-shadow:0 18px 40px -18px rgba(0,0,0,.45);padding:12px;text-align:center}
+.cw .gw .btn2{background:#2F5FD0}
+.cw .cur{position:absolute;left:60%;top:50%;width:16px;height:16px;transition:left .9s cubic-bezier(.5,0,.2,1),top .9s cubic-bezier(.5,0,.2,1);z-index:9;pointer-events:none}
+.cw .cur svg{display:block;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
+.cw .cur::after{content:"";position:absolute;left:-10px;top:-10px;width:20px;height:20px;border-radius:50%;background:#E8C88A;opacity:0;transform:scale(.3)}
+.cw .cur.clk::after{animation:ck .5s ease-out}
+@keyframes ck{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(1.8)}}
+.cwcap{display:flex;gap:10px;align-items:flex-start;min-height:44px;margin-top:10px}.cwcap .sn{flex:none}.cwcap p{margin:0;font-weight:500;transition:opacity .25s}
+.cwbar{display:flex;gap:4px;margin-top:8px}.cwbar i{flex:1;height:3px;border-radius:2px;background:var(--rule)}.cwbar i.on{background:#1E3B31}
+.who{display:grid;gap:8px}.who>div{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--rule);border-radius:10px;background:var(--sheet)}.who .ic{width:22px;height:22px;border-radius:6px;background:var(--c)}.who>div>div{display:block}.who b{display:block}.who span{color:var(--muted);font-size:14px}
 @media (prefers-reduced-motion:reduce){.photo .stamp,.rep .rh .stamp2,.rise,.log .ln{animation:none}.strike{animation:none;background-size:100% 2px}.ticker .tk{animation:none;opacity:1}.bar i{animation:none;width:100%}}
 .rep .nums.n4{grid-template-columns:repeat(4,1fr)}.rep .nums.n4>div{padding:12px 10px}.rep .nums.n4 b{font-size:19px}
 .b2{display:flex;flex-direction:column;gap:6px}
@@ -327,11 +357,65 @@ function pEmp(p){
   if(D.bron)h+='<div class="cta"><span class="eyebrow">Чтобы работал сам</span><p>'+esc(p.cta)+'</p><button class="btn b-mark" onclick="act(\'bron\')">Хочу на созвон</button></div>';
   return h+'</div>';
 }
+
+var CWT=null;
+function connAnim(){
+  var cur='<div class="cur" id="cwc"><svg width="16" height="20" viewBox="0 0 16 20"><path d="M1 1l13 11H7.5L11 19l-2.6 1-3.4-7.4L1 16z" fill="#141A16" stroke="#fff" stroke-width="1.2"/></svg></div>';
+  var tiles=[["Gmail","#D9534F"],["Google Calendar","#3B7BE0"],["Google Drive","#2E9E5B"],["Notion","#141A16"],["Slack","#7A4A9E"],["Canva","#20A8C8"]];
+  var h='<div class="cw" id="cw"><div class="top"><i></i><i></i><i></i></div><div class="sb"><b></b><b></b><b></b><b></b><b></b></div>'+
+  '<div class="mn"><div class="msg" style="width:55%"></div><div class="msg" style="width:78%;margin-left:auto;background:#DDE6E0"></div><div class="msg" style="width:66%"></div><div class="inp"><span class="pl" id="cw-plus">+</span><span>Напишите задачу…</span></div></div>'+
+  '<div class="L pop" id="cw-menu" style="left:26%;bottom:23%"><div>Add files</div><div id="cw-conn">Connectors <span>›</span></div><div>Research</div></div>'+
+  '<div class="L pop" id="cw-sub" style="left:57%;bottom:26%"><div>Gmail <span class="tg" id="cw-t1"></span></div><div>Google Calendar <span class="tg" id="cw-t2"></span></div><div>Google Drive <span class="tg" id="cw-t3"></span></div><div class="hl" id="cw-manage">Manage connectors</div></div>'+
+  '<div class="L pg" id="cw-page"><h5>Connectors <span>+</span></h5><div id="cw-list" style="color:#9AA197">Пока ничего не подключено</div></div>'+
+  '<div class="L md" id="cw-dir"><h6>Каталог коннекторов</h6><div class="gr">'+tiles.map(function(t,i){return '<div'+(i===0?' id="cw-gm"':'')+'><span class="ic" style="--c:'+t[1]+'"></span>'+t[0]+'</div>'}).join("")+'</div></div>'+
+  '<div class="L md" id="cw-card" style="text-align:center"><span class="ic" style="--c:#D9534F;width:30px;height:30px;margin-top:10px"></span><h6 style="margin-top:6px">Gmail</h6><div style="color:#5E675F">Читает письма и готовит черновики ответов.</div><span class="btn2" id="cw-connect">Connect</span></div>'+
+  '<div class="L gw" id="cw-g"><b style="font-size:13px">Google</b><div style="margin-top:6px;color:#5E675F">Claude просит доступ к вашему аккаунту Google</div><div style="margin-top:6px;font-size:10px;color:#9AA197">ваша.почта@gmail.com</div><span class="btn2" id="cw-allow">Allow</span></div>'+cur+'</div>';
+  return h+'<div class="cwcap"><span class="sn" id="cwn">1</span><p id="cwp"></p></div><div class="cwbar" id="cwb"></div>';
+}
+function connRun(){
+  clearTimeout(CWT);var st=document.getElementById("cw");if(!st)return;
+  var rows=function(n){var a=[["Gmail"],["Google Calendar"],["Google Drive"]].slice(0,n);return a.map(function(x){return '<div class="row"><span>'+x[0]+'</span><span class="ok">✓ Connected</span></div>'}).join("")};
+  var S=[
+    {on:[],c:[60,50],t:"Откройте приложение Claude и любой чат."},
+    {on:["cw-menu"],c:"cw-plus",k:1,t:"Нажмите «+» слева под полем ввода."},
+    {on:["cw-menu","cw-sub"],c:"cw-conn",t:"Наведите на «Connectors»."},
+    {on:["cw-page"],c:"cw-manage",k:1,t:"Нажмите «Manage connectors». Откроется страница коннекторов."},
+    {on:["cw-page","cw-dir"],c:[93,15],k:1,t:"Нажмите «+» рядом со словом Connectors. Откроется каталог."},
+    {on:["cw-page","cw-card"],c:"cw-gm",k:1,t:"Выберите Gmail."},
+    {on:["cw-page","cw-g"],c:"cw-connect",k:1,t:"Нажмите «Connect»."},
+    {on:["cw-page"],c:"cw-allow",k:1,list:1,t:"Войдите в свою почту Google и нажмите «Allow». Gmail подключён."},
+    {on:["cw-page"],c:[70,60],list:3,t:"Точно так же подключите Google Calendar и Google Drive."},
+    {on:["cw-menu","cw-sub"],c:"cw-t1",k:1,tg:1,t:"В новом чате: «+», потом «Connectors» и включите нужные. Готово."}
+  ];
+  var bar=document.getElementById("cwb");bar.innerHTML=S.map(function(){return "<i></i>"}).join("");
+  var i=0,cur=document.getElementById("cwc");
+  function pos(c){if(Array.isArray(c))return c;var e=document.getElementById(c);if(!e)return [50,50];var a=st.getBoundingClientRect(),b=e.getBoundingClientRect();return [(b.left+b.width/2-a.left)/a.width*100,(b.top+b.height/2-a.top)/a.height*100]}
+  function one(){
+    if(!document.getElementById("cw"))return;
+    var s=S[i%S.length],n=i%S.length;
+    if(n===0){["cw-t1","cw-t2","cw-t3"].forEach(function(x){document.getElementById(x).classList.remove("on")});document.getElementById("cw-list").innerHTML="Пока ничего не подключено";document.getElementById("cw-list").style.color="#9AA197"}
+    var p=pos(s.c);cur.style.left=p[0]+"%";cur.style.top=p[1]+"%";
+    document.getElementById("cwn").textContent=n+1;var cp=document.getElementById("cwp");cp.style.opacity=0;setTimeout(function(){cp.textContent=s.t;cp.style.opacity=1},200);
+    [].forEach.call(bar.children,function(b,j){b.className=j<=n?"on":""});
+    CWT=setTimeout(function(){
+      if(s.k){cur.classList.remove("clk");void cur.offsetWidth;cur.classList.add("clk")}
+      setTimeout(function(){
+        st.querySelectorAll(".L").forEach(function(l){l.classList.toggle("on",s.on.indexOf(l.id)>=0)});
+        if(s.list){var L=document.getElementById("cw-list");L.innerHTML=rows(s.list);L.style.color=""}
+        if(s.tg){["cw-t1","cw-t2","cw-t3"].forEach(function(x,j){setTimeout(function(){document.getElementById(x).classList.add("on")},j*350)})}
+        i++;CWT=setTimeout(one,s.k?1300:1500);
+      },s.k?250:0);
+    },1000);
+  }
+  one();
+}
 function pInfo(p){
   var h='<div class="stack" style="padding-top:26px"><span class="eyebrow">'+esc(p.eyebrow||"")+'</span><h1>'+esc(p.title)+'</h1><p class="lead">'+esc(p.lead||"")+'</p>';
   if(p.compare){h+='<div class="cmp">'+p.compare.map(function(r,i){return '<div class="r'+(i?"":" hd")+' rise" style="--d:'+(i*.06)+'s"><div>'+esc(r[0])+'</div><div>'+esc(r[1])+'</div></div>'}).join("")+'</div>'}
   if(p.rows){h+='<ul class="pros">'+p.rows.map(function(r,i){return '<li class="rise" style="--d:'+(.2+i*.08)+'s"><span class="sn">'+(i+1)+'</span><div><b>'+esc(r.t)+'</b><p>'+esc(r.d)+'</p></div></li>'}).join("")+'</ul>'}
   if(p.steps){h+='<ol class="steps">'+p.steps.map(function(r,i){return '<li><span class="sn">'+(i+1)+'</span><div><b>'+esc(r.t)+'</b><p style="color:#3B443E;font-size:15px;margin-top:2px">'+esc(r.d)+'</p>'+(r.link?'<span class="chipl">'+esc(r.link)+'</span>':'')+'</div></li>'}).join("")+'</ol>'}
+  if(p.anim==="conn")h+='<div>'+connAnim()+'</div>';
+  if(p.who){h+='<div class="sec-t" style="margin:6px 0 0">Кому из сотрудников что нужно</div><div class="who">'+p.who.map(function(w){return '<div><span class="ic" style="--c:'+w.c+'"></span><div><b>'+esc(w.t)+'</b><span>'+esc(w.d)+'</span></div></div>'}).join("")+'</div>'}
   if(p.note)h+='<div class="note">'+esc(p.note)+'</div>';
   return h+'</div>';
 }
@@ -423,7 +507,7 @@ function page(){
   var nx=D.pages[I+1],nl=nx?(nx.kind==="emp"?nx.role:nx.title||""):"";
   var nav='<div class="nav'+(I===0?" only":"")+'"><div class="in">'+(I>0?'<button class="prev" aria-label="Назад" onclick="go(-1)">←</button>':"")+(nx?'<button class="next" onclick="go(1)"><span>'+(I===0?"Начать":"Дальше")+'</span><small>'+esc(nl)+' →</small></button>':"")+'</div></div>';
   $("#app").innerHTML=rail+'<main class="page fade">'+h+'</main>'+(nx?nav:"");
-  window.scrollTo(0,0);if(p.kind==="calc")calc();
+  window.scrollTo(0,0);if(p.kind==="calc")calc();clearTimeout(CWT);if(p.anim)setTimeout(connRun,300);
   document.querySelectorAll(".case .big").forEach(countStr);
   loadImg(p.img);if(nx)loadImg(nx.img);
   google.script.run.guideSeen(INIT,I);
