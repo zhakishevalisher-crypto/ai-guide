@@ -471,14 +471,14 @@ function demoForm(err){DS.st=0;
   if(err)h+='<p class="warn">'+esc(err)+'</p>';
   h+='<p style="font-size:14px;color:var(--muted)">Бесплатно, один разбор на человека. Обычно 20-60 секунд.</p></div></main>';
   $("#app").innerHTML=demoRail()+h;var f=$("#df");f.addEventListener("submit",function(e){e.preventDefault();var q=$("#dq").value.trim();if(q.length<3){$("#dq").focus();return}demoRun(q)})}
-function demoErr(w){clearInterval(DS.tk);var m={notfound:"Не нашёл такой бизнес в 2ГИС. Вставьте ссылку: в 2ГИС «Поделиться», потом «Скопировать ссылку».",noreviews:"Бизнес нашёл, но текстовых отзывов почти нет, разбирать нечего.",busy:"Сегодня очередь на разборы заполнена. Загляните завтра.",used:"Бесплатный разбор уже сделан.",fail:"Что-то пошло не так на моей стороне. Попробуйте ещё раз через минуту.",slow:"2ГИС сегодня отвечает медленно. Отзывы ещё собираются: нажмите «Найти» ещё раз через пару минут, начнём с того же места.",lost:"Сессия устарела, начните заново.",short:"Напишите название чуть подробнее."};demoForm(m[w]||m.fail)}
+function demoErr(w){clearInterval(DS.tk);var m={notfound:"Не нашёл такой бизнес ни в 2ГИС, ни в Google Картах. Вставьте ссылку: в 2ГИС «Поделиться», потом «Скопировать ссылку».",noreviews:"Бизнес нашёл, но текстовых отзывов почти нет ни в 2ГИС, ни в Google Картах, разбирать нечего.",busy:"Сегодня очередь на разборы заполнена. Загляните завтра.",used:"Бесплатный разбор уже сделан.",fail:"Что-то пошло не так на моей стороне. Попробуйте ещё раз через минуту.",slow:"2ГИС сегодня отвечает медленно. Отзывы ещё собираются: нажмите «Найти» ещё раз через пару минут, начнём с того же места.",lost:"Сессия устарела, начните заново.",short:"Напишите название чуть подробнее."};demoForm(m[w]||m.fail)}
 function run(fn){var a=Array.prototype.slice.call(arguments,1);return new Promise(function(ok,no){var r=google.script.run.withSuccessHandler(ok).withFailureHandler(no);r[fn].apply(r,a)})}
 function demoRun(q){T0=Date.now();DS.st=1;
   $("#app").innerHTML=demoRail()+'<main class="page fade"><div class="stack" style="padding-top:26px"><span class="eyebrow">Сотрудник работает</span><h1 id="dh">Читаю ваши отзывы</h1><div class="log" id="log"></div><div id="dx"></div></div></main>';
-  var l1=logLine("Ищу бизнес в 2ГИС","wait");
+  var l1=logLine("Ищу бизнес в 2ГИС и Google Картах","wait");
   run("demoFind",INIT,q).then(function(r){
     if(!r||!r.ok)return demoErr(r&&r.why);
-    done(l1,"✓ Нашёл: "+esc(r.name||"ваш бизнес"));
+    done(l1,"✓ Нашёл"+(r.via==="google"?" в Google Картах":"")+": "+esc(r.name||"ваш бизнес"));
     if(r.mem)logLine("Этот бизнес я уже разбирал, достаю отчёт","ok");else if(r.inBase)logLine("Он есть в моей базе Астаны: "+r.n+" "+pl(r.n,"отзыв","отзыва","отзывов"),"ok");else logLine("В базе его нет, собираю свежие отзывы","ok");
     $("#dx").innerHTML='<div class="log" style="min-height:0"><div style="display:flex;justify-content:space-between;align-items:end"><span class="tm">ПРОЧИТАНО ОТЗЫВОВ</span><span class="counter" id="cnt">0</span></div><div class="bar" id="bar"><i></i></div><div class="ticker" id="tick"></div></div>';
     var l2=logLine("Читаю отзывы","wait");
@@ -495,7 +495,7 @@ function poll(i){if(i>45){google.script.run.demoSlow(INIT);return Promise.resolv
 function pl(n,a,b,c){n=Math.abs(n)%100;var n1=n%10;if(n>10&&n<20)return c;if(n1>1&&n1<5)return b;if(n1===1)return a;return c}
 function cpText(t,btn){function ok(){btn.textContent="Скопировано";setTimeout(function(){btn.textContent="Скопировать ответ"},2000)}try{navigator.clipboard.writeText(t).then(ok,function(){old(t);ok()})}catch(e){old(t);ok()}}
 function num(v){return String(v).replace(".",",")}
-function demoResult(res,paid){DS.st=3;DS.res=res;var s=res.stats||{},nc=res.niche,h='<main class="page fade"><div class="stack" style="padding-top:22px"><div class="rep"><div class="rh"><span class="eyebrow" style="color:#B9C7BE">Разбор отзывов · 2ГИС</span><h2 style="color:#F4F5F0;margin-top:8px;max-width:74%">'+esc(res.name)+'</h2><span class="stamp2">Разбор готов</span></div>';
+function demoResult(res,paid){DS.st=3;DS.res=res;var s=res.stats||{},nc=res.niche,h='<main class="page fade"><div class="stack" style="padding-top:22px"><div class="rep"><div class="rh"><span class="eyebrow" style="color:#B9C7BE">Разбор отзывов · '+(res.src==="google"?"Google Карты":"2ГИС")+'</span><h2 style="color:#F4F5F0;margin-top:8px;max-width:74%">'+esc(res.name)+'</h2><span class="stamp2">Разбор готов</span></div>';
   h+='<div class="nums n4"><div><b data-n="'+(s.read||0)+'">0</b><span>прочитано</span></div><div><b>'+num(s.avg||"-")+'</b><span>средняя</span></div><div><b data-n="'+(s.bad||0)+'">0</b><span>плохих</span></div><div><b data-n="'+(s.badNo||0)+'">0</b><span>без ответа</span></div></div>';
   if(res.hook)h+='<div class="blk"><p style="font-size:18px;font-weight:500">'+esc(res.hook)+'</p></div>';
   if(nc||s.recent){h+='<div class="blk"><div class="sec-t" style="margin:0">Вы и ваша ниша в Астане</div>';
