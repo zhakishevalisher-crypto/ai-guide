@@ -318,14 +318,15 @@ function toast(t){var e=$("#toast");e.textContent=t;e.classList.add("show");clea
 function ldr(t){return '<div class="ld"><div class="sh"><b></b><b></b><b></b><b></b><i class="dot"></i></div><p class="st">'+t+'</p></div>'}
 function screen(h){$("#app").innerHTML='<div class="center fade">'+h+'</div>'}
 function onlyBot(){return '<p class="eyebrow">Доступ по пропуску</p><h1>Гайд открывается только из бота</h1><p class="lead">Нажмите «Открыть гайд» в чате с ботом.</p><button class="btn b-line" onclick="TGOPEN(\'https://t.me/'+BOT+'\')">Перейти в бота</button>'}
-function act(w){google.script.run.withSuccessHandler(function(){toast(w==="buy"?"Счёт оформляю в чате с ботом, открываю чат…":"Готово, я написал вам в чат с ботом. Закройте гайд, чтобы посмотреть.");if(w==="buy"){try{var tg=window.Telegram&&Telegram.WebApp;if(tg&&tg.close)setTimeout(function(){tg.close()},1400)}catch(e){}}}).guideAct(INIT,w)}
+function act(w){if(w==="buy")toast("Оформляю счёт, секунду…");google.script.run.withSuccessHandler(function(){toast(w==="buy"?"Счёт оформляю в чате с ботом, открываю чат…":"Готово, я написал вам в чат с ботом. Закройте гайд, чтобы посмотреть.");if(w==="buy"){try{var tg=window.Telegram&&Telegram.WebApp;if(tg&&tg.close)setTimeout(function(){tg.close()},1400)}catch(e){}}}).guideAct(INIT,w)}
 function wm(t){return;var c=document.createElement("canvas");c.width=340;c.height=210;var x=c.getContext("2d");x.translate(170,105);x.rotate(-.42);x.fillStyle="#141A16";x.font="500 14px 'JetBrains Mono',monospace";x.textAlign="center";x.fillText(t,0,0);$("#wm").style.background="url("+c.toDataURL()+")"}
 function copy(){var t=D.pages[I].prompt,b=$("#cp");function done(){b.classList.add("ok");b.textContent="Скопировано. Вставьте в Cowork";setTimeout(function(){b.classList.remove("ok");b.textContent="Скопировать задание"},2600)}
   try{navigator.clipboard.writeText(t).then(done,function(){old(t);done()})}catch(e){old(t);done()}}
 function old(t){var a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}document.body.removeChild(a)}
 function hl(s){return esc(s).replace(/\[([^\]]+)\]/g,"<b>[$1]</b>")}
 function photo(k,tag,stamp,extra){var st=IMG[k]?' style="background-image:url('+IMG[k]+')"':"";return '<div class="photo" data-img="'+k+'"'+st+'>'+(stamp?'<span class="stamp">'+esc(stamp)+'</span>':"")+(tag?'<span class="tag">'+esc(tag)+'</span>':"")+(extra||"")+'</div>'}
-function loadImg(k){if(!k)return;if(!IMG[k]){var c=lsGet("gimg2_"+k);if(c)IMG[k]=c}if(IMG[k]){var e0=document.querySelector('[data-img="'+k+'"]');if(e0)e0.style.backgroundImage="url("+IMG[k]+")";return}google.script.run.withSuccessHandler(function(u){if(!u)return;IMG[k]=u;lsSet("gimg2_"+k,u);var e=document.querySelector('[data-img="'+k+'"]');if(e)e.style.backgroundImage="url("+u+")"}).guideImg(INIT,k)}
+function loadImg(k){if(!k)return;if(STATIC_IMG){IMG[k]="img_"+k+".webp"}if(!IMG[k]){var c=lsGet("gimg2_"+k);if(c)IMG[k]=c}if(IMG[k]){var e0=document.querySelector('[data-img="'+k+'"]');if(e0)e0.style.backgroundImage="url("+IMG[k]+")";return}google.script.run.withSuccessHandler(function(u){if(!u)return;IMG[k]=u;lsSet("gimg2_"+k,u);var e=document.querySelector('[data-img="'+k+'"]');if(e)e.style.backgroundImage="url("+u+")"}).guideImg(INIT,k)}
+var STATIC_IMG=/github\.io/.test(location.host);
 function calc(){var s=0,n=0;D.roles.forEach(function(r){var c=$("#c_"+r.k),v=$("#v_"+r.k);if(c&&c.checked){s+=Number(v.value)||0;n++}});
   $("#sum").textContent=fmt(s)+" ₸";$("#year").textContent=fmt(s*12)+" ₸";$("#save").textContent=fmt(Math.max(0,s-10000)*12)+" ₸";$("#cnt").textContent=n+" из 7"}
 
@@ -538,7 +539,9 @@ function start(init){
   GKEY="guide_"+(new URLSearchParams(location.search).get("v")||"0")+"_"+uidOf(init);
   var cached=lsGet(GKEY),shown=false;
   if(cached&&cached.ok){show(cached);shown=true}
-  else{fastOpen(init,function(r){if(!shown&&!D){show(r);shown=true}});if(!document.getElementById("ldt"))screen(ldr("Открываю гайд"));setTimeout(function(){if(!D){clearInterval(window.LDI);screen(ldr("Соединяюсь с сервером, ещё пара секунд"))}},6000)}
+  else{var qk=new URLSearchParams(location.search).get("k");
+    if(qk)fastOpen(init,function(r){if(!shown&&!D){show(r);shown=true}});
+    else{try{fetch("p.json?v="+(new URLSearchParams(location.search).get("v")||"")).then(function(r){return r.json()}).then(function(r){if(!shown&&!D&&r&&r.ok){show(r);shown=true}}).catch(function(){})}catch(e){}}if(!document.getElementById("ldt"))screen(ldr("Открываю гайд"));setTimeout(function(){if(!D){clearInterval(window.LDI);screen(ldr("Соединяюсь с сервером, ещё пара секунд"))}},6000)}
   var tries=0;
   (function go1(){tries++;
     google.script.run.withFailureHandler(function(){if(tries<3)return setTimeout(go1,1200*tries);if(!shown)screen('<h1>Не получилось открыть</h1><p class="lead">Проверьте интернет и нажмите ещё раз.</p><button class="btn b-mark" onclick="start(INIT)">Открыть ещё раз</button>')}).withSuccessHandler(function(r){
