@@ -318,7 +318,7 @@ function toast(t){var e=$("#toast");e.textContent=t;e.classList.add("show");clea
 function ldr(t){return '<div class="ld"><div class="sh"><b></b><b></b><b></b><b></b><i class="dot"></i></div><p class="st">'+t+'</p></div>'}
 function screen(h){$("#app").innerHTML='<div class="center fade">'+h+'</div>'}
 function onlyBot(){return '<p class="eyebrow">Доступ по пропуску</p><h1>Гайд открывается только из бота</h1><p class="lead">Нажмите «Открыть гайд» в чате с ботом.</p><button class="btn b-line" onclick="TGOPEN(\'https://t.me/'+BOT+'\')">Перейти в бота</button>'}
-function act(w){google.script.run.withSuccessHandler(function(){toast("Готово, я написал вам в чат с ботом. Закройте гайд, чтобы посмотреть.")}).guideAct(INIT,w)}
+function act(w){google.script.run.withSuccessHandler(function(){toast(w==="buy"?"Счёт оформляю в чате с ботом, открываю чат…":"Готово, я написал вам в чат с ботом. Закройте гайд, чтобы посмотреть.");if(w==="buy"){try{var tg=window.Telegram&&Telegram.WebApp;if(tg&&tg.close)setTimeout(function(){tg.close()},1400)}catch(e){}}}).guideAct(INIT,w)}
 function wm(t){return;var c=document.createElement("canvas");c.width=340;c.height=210;var x=c.getContext("2d");x.translate(170,105);x.rotate(-.42);x.fillStyle="#141A16";x.font="500 14px 'JetBrains Mono',monospace";x.textAlign="center";x.fillText(t,0,0);$("#wm").style.background="url("+c.toDataURL()+")"}
 function copy(){var t=D.pages[I].prompt,b=$("#cp");function done(){b.classList.add("ok");b.textContent="Скопировано. Вставьте в Cowork";setTimeout(function(){b.classList.remove("ok");b.textContent="Скопировать задание"},2600)}
   try{navigator.clipboard.writeText(t).then(done,function(){old(t);done()})}catch(e){old(t);done()}}
@@ -426,6 +426,11 @@ function pCalc(p){
   h+='</div><div class="res"><div><span class="k">Отмечено</span><span class="v" id="cnt"></span></div><div><span class="k">В месяц</span><span class="v" id="sum"></span></div><div><span class="k">В год</span><span class="v" id="year"></span></div><div><span class="k">Агент в месяц</span><span class="v">от $20</span></div><div class="wide"><span class="k">Экономия за год</span><span class="v" id="save"></span></div></div>';
   return h+'<p style="font-size:14px;color:var(--muted)">Агент не заменяет каждого человека целиком. Он забирает рутину, поэтому часто хватает одного сотрудника вместо трёх. Подписка от $20, около 10 000 ₸ в месяц.</p></div>';
 }
+function pLock(p){
+  var h='<div class="stack" style="padding-top:26px"><span class="eyebrow">Бесплатная часть закончилась</span><h1>'+esc(p.title)+'</h1><p class="lead">'+esc(p.lead)+'</p><div class="more">';
+  p.rest.forEach(function(x){h+='<div><b>🔒 '+esc(x[0])+'</b><span>'+esc(x[1])+(x[2]?' <b>'+esc(x[2])+'</b> '+esc(x[3]):'')+'</span></div>'});
+  return h+'</div><div class="cta"><span class="eyebrow">Полный гайд</span><p>Все 7 сотрудников с готовыми заданиями, калькулятор и ещё 13 должностей. Открывается здесь же сразу после оплаты и остаётся у вас навсегда.</p><button class="btn b-mark" onclick="act(\'buy\')">Открыть всех · '+esc(p.price)+' ₸</button></div></div>';
+}
 function pMore(p){
   var h='<div class="stack" style="padding-top:26px"><span class="eyebrow">Это только начало</span><h1>'+esc(p.title)+'</h1><p class="lead">'+esc(p.lead)+'</p><div class="more">';
   p.items.forEach(function(x){h+='<div><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>'});
@@ -491,7 +496,7 @@ function demoResult(res,paid){DS.st=3;DS.res=res;var s=res.stats||{},nc=res.nich
   if((res.posts||[]).length){h+='<div class="blk"><div class="sec-t" style="margin:0">3 темы для постов из слов ваших гостей</div><ol class="steps">'+res.posts.map(function(x,i){return '<li><span class="sn">'+(i+1)+'</span><div><b>'+esc(x.t)+'</b>'+(x.q?'<p style="color:#3B443E;font-size:14.5px;margin-top:2px">«'+esc(x.q)+'»</p>':'')+'</div></li>'}).join("")+'</ol></div>'}
   var tips=res.tips&&res.tips.length?res.tips:(res.tip?[res.tip]:[]);
   if(tips.length)h+='<div class="blk" style="border-bottom:0"><div class="sec-t" style="margin:0">Что сделать на этой неделе</div><ol class="steps">'+tips.map(function(t,i){return '<li><span class="sn" style="background:var(--mark);color:var(--markInk)">'+(i+1)+'</span><div>'+esc(t)+'</div></li>'}).join("")+'</ol></div>';
-  h+='</div><div class="cta"><span class="eyebrow">Это сделал агент за минуту</span><p>У меня он работает ещё на шести должностях: менеджер по заявкам, бухгалтер, юрист, закупщик, финконтролёр и HR. Как поставить такого агента себе и что ему поручить, я расписал в гайде.</p>'+(paid?'<button class="btn b-mark" onclick="MODE=\'guide\';start(INIT)">Открыть гайд</button>':'<button class="btn b-mark" onclick="act(\'mk\')">Получить гайд</button>')+'</div></div></main>';
+  h+='</div><div class="cta"><span class="eyebrow">Это сделал агент за минуту</span><p>У меня он работает ещё на шести должностях: менеджер по заявкам, бухгалтер, юрист, закупщик, финконтролёр и HR. Как поставить такого агента себе и что ему поручить, я расписал в гайде.</p>'+'<button class="btn b-mark" onclick="MODE=\'guide\';start(INIT)">'+(paid?'Открыть гайд':'Открыть гайд бесплатно')+'</button>'+'</div></div></main>';
   $("#app").innerHTML=demoRail()+h;window.scrollTo(0,0);document.querySelectorAll("[data-n]").forEach(function(e){countTo(e,e.getAttribute("data-n"),1000)});
   document.querySelectorAll(".cpb").forEach(function(bt){bt.addEventListener("click",function(){cpText(res.replies[Number(bt.getAttribute("data-i"))].a,bt)})})}
 function bar2(label,you,nic,unit,max){var y=Math.max(0,Math.min(100,you/max*100)),n=Math.max(0,Math.min(100,nic/max*100)),worse=you<nic;
@@ -501,7 +506,7 @@ function startDemo(init){INIT=init;if(!init){screen(onlyBot());return}
   run("demoState",init).then(function(r){if(DS.st!==0)return;if(!r||!r.ok){screen(onlyBot());return}DS.price=r.price;wm(r.mark);if(r.done&&r.result){var q=$("#dq");if(!q||!q.value)demoResult(r.result,r.paid)}}).catch(function(){})}
 function page(){
   var p=D.pages[I],n=D.pages.length,h;
-  if(p.kind==="cover")h=pCover(p);else if(p.kind==="info")h=pInfo(p);else if(p.kind==="emp")h=pEmp(p);else if(p.kind==="calc")h=pCalc(p);else if(p.kind==="more")h=pMore(p);else h=pFinal(p);
+  if(p.kind==="cover")h=pCover(p);else if(p.kind==="info")h=pInfo(p);else if(p.kind==="emp")h=pEmp(p);else if(p.kind==="calc")h=pCalc(p);else if(p.kind==="more")h=pMore(p);else if(p.kind==="lock")h=pLock(p);else h=pFinal(p);
   var ticks="";for(var i=0;i<n;i++)ticks+='<i class="'+(i<I?"on":i===I?"now":"")+'"></i>';
   var rail='<div class="rail"><div class="in"><span class="t">'+String(I+1).padStart(2,"0")+" / "+n+'</span><div class="ticks">'+ticks+'</div></div></div>';
   var nx=D.pages[I+1],nl=nx?(nx.kind==="emp"?nx.role:nx.title||""):"";
