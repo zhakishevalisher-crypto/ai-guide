@@ -325,7 +325,8 @@ function copy(){var t=D.pages[I].prompt,b=$("#cp");function done(){b.classList.a
 function old(t){var a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}document.body.removeChild(a)}
 function hl(s){return esc(s).replace(/\[([^\]]+)\]/g,"<b>[$1]</b>")}
 function photo(k,tag,stamp,extra){var st=IMG[k]?' style="background-image:url('+IMG[k]+')"':"";return '<div class="photo" data-img="'+k+'"'+st+'>'+(stamp?'<span class="stamp">'+esc(stamp)+'</span>':"")+(tag?'<span class="tag">'+esc(tag)+'</span>':"")+(extra||"")+'</div>'}
-function loadImg(k){if(!k)return;if(STATIC_IMG){IMG[k]="img_"+k+".webp"}if(!IMG[k]){var c=lsGet("gimg2_"+k);if(c)IMG[k]=c}if(IMG[k]){var e0=document.querySelector('[data-img="'+k+'"]');if(e0)e0.style.backgroundImage="url("+IMG[k]+")";return}google.script.run.withSuccessHandler(function(u){if(!u)return;IMG[k]=u;lsSet("gimg2_"+k,u);var e=document.querySelector('[data-img="'+k+'"]');if(e)e.style.backgroundImage="url("+u+")"}).guideImg(INIT,k)}
+var STATIC_KEYS={cover:1,e1:1,e2:1,e3:1,e4:1,e5:1,e6:1,e7:1};
+function loadImg(k){if(!k)return;if(STATIC_IMG&&STATIC_KEYS[k]){IMG[k]="img_"+k+".webp"}if(!IMG[k]){var c=lsGet("gimg2_"+k);if(c)IMG[k]=c}if(IMG[k]){var e0=document.querySelector('[data-img="'+k+'"]');if(e0)e0.style.backgroundImage="url("+IMG[k]+")";return}google.script.run.withSuccessHandler(function(u){if(!u)return;IMG[k]=u;lsSet("gimg2_"+k,u);var e=document.querySelector('[data-img="'+k+'"]');if(e)e.style.backgroundImage="url("+u+")"}).guideImg(INIT,k)}
 var STATIC_IMG=/github\.io/.test(location.host);
 function calc(){var s=0,n=0;D.roles.forEach(function(r){var c=$("#c_"+r.k),v=$("#v_"+r.k);if(c&&c.checked){s+=Number(v.value)||0;n++}});
   $("#sum").textContent=fmt(s)+" ₸";$("#year").textContent=fmt(s*12)+" ₸";$("#save").textContent=fmt(Math.max(0,s-10000)*12)+" ₸";$("#cnt").textContent=n+" из 7"}
@@ -342,9 +343,9 @@ function pCover(p){
   return h;
 }
 function pEmp(p){
-  var r=D.roles[p.n-1]||{s:0};
+  var r=(p.n<=D.roles.length&&D.roles[p.n-1])||{s:p.sal||0};
   var h=photo("e"+p.n,"Личное дело № 0"+p.n,"Принят в штат");
-  h+='<div class="stack"><div class="file-head"><span class="eyebrow">Сотрудник '+p.n+' из 7</span><h1>'+esc(p.role)+'</h1></div>';
+  h+='<div class="stack"><div class="file-head"><span class="eyebrow">'+(p.n>7?"Бонусный сотрудник":"Сотрудник "+p.n+" из 7")+'</span><h1>'+esc(p.role)+'</h1></div>';
   h+='<div class="pay"><div><span class="k">Оклад в Астане</span><span class="v strike">'+fmt(r.s)+' ₸</span></div><div><span class="k">Агенту нужно</span><span class="v">'+esc(p.time)+'</span></div></div>';
   h+='<p class="task">'+esc(p.task)+'</p>';
   h+='<div class="case"><span class="big" data-v="'+esc(p.big)+'">'+esc(p.big)+'</span><span class="bl">'+esc(p.bigL)+'</span><p>'+esc(p.kase)+'</p></div>';
