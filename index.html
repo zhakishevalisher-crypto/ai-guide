@@ -534,8 +534,8 @@ function page(){
   var ticks="";for(var i=0;i<n;i++)ticks+='<i class="'+(i<I?"on":i===I?"now":"")+'"></i>';
   var rail='<div class="rail"><div class="in"><span class="t">'+String(I+1).padStart(2,"0")+" / "+n+'</span><div class="ticks">'+ticks+'</div></div></div>';
   var nx=D.pages[I+1],nl=nx?(nx.kind==="emp"?nx.role:nx.title||""):"";
-  var nav='<div class="nav'+(I===0?" only":"")+'"><div class="in">'+(I>0?'<button class="prev" aria-label="Назад" onclick="go(-1)">←</button>':"")+(nx?'<button class="next" onclick="go(1)"><span>'+(I===0?"Начать":"Дальше")+'</span><small>'+esc(nl)+' →</small></button>':"")+'</div></div>';
-  $("#app").innerHTML=rail+'<main class="page fade">'+h+'</main>'+(nx?nav:"");
+  var nav='<div class="nav'+(I===0?" only":"")+'"><div class="in">'+(I>0?'<button class="prev" aria-label="Назад" onclick="go(-1)">←</button>':"")+(nx?'<button class="next" onclick="go(1)"><span>'+(I===0?"Начать":"Дальше")+'</span><small>'+esc(nl)+' →</small></button>':'<button class="next" onclick="go(-999)"><span>Читать с начала</span><small>к обложке ↑</small></button>')+'</div></div>';
+  $("#app").innerHTML=rail+'<main class="page fade">'+h+'</main>'+nav;
   window.scrollTo(0,0);if(p.kind==="calc")calc();clearTimeout(CWT);if(p.anim)setTimeout(connRun,300);
   document.querySelectorAll(".case .big").forEach(countStr);
   loadImg(p.img);if(nx)loadImg(nx.img);
